@@ -61,7 +61,7 @@ button {
 .modal-container {
     position: relative;
     width: min(700px, 90%);
-    padding: 20px 20px 0;
+    padding: 20px;
     border-radius: 10px;
     background: #fff;
     transform: scale(0);
