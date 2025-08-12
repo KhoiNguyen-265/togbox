@@ -105,6 +105,27 @@ article img {
 
 .modal-footer {
     padding: 20px 0;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.modal-btn {
+    padding: 8px 20px;
+    color: #fff;
+    background: #464e63;
+}
+
+.modal-btn.primary {
+    background: #377aad;
+}
+
+.modal-btn.danger {
+    background: rgb(196, 69, 69);
+}
+
+.modal-btn.pull-left {
+    margin-right: auto;
 }
 
 .no-scroll {
