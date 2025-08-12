@@ -1,6 +1,8 @@
 const $ = document.querySelector.bind(document);
 const $$ = document.querySelectorAll.bind(document);
 
+Modal.elements = [];
+
 function Modal(options = {}) {
     const {
         templateId,
@@ -113,6 +115,8 @@ function Modal(options = {}) {
     };
 
     this.open = () => {
+        Modal.elements.push(this);
+
         if (!this._backdrop) {
             this._build();
         }
@@ -148,7 +152,9 @@ function Modal(options = {}) {
     };
 
     this._handleEscapeKey = (e) => {
-        if (e.key === "Escape") {
+        const lastModal = Modal.elements[Modal.elements.length - 1];
+
+        if (e.key === "Escape" && this === lastModal) {
             this.close();
         }
     };
@@ -161,6 +167,8 @@ function Modal(options = {}) {
     };
 
     this.close = (destroy = destroyOnClose) => {
+        Modal.elements.pop();
+
         this._backdrop.classList.remove("show");
 
         if (this._allowEscapeClose) {
@@ -175,8 +183,10 @@ function Modal(options = {}) {
             }
 
             // Enable scrolling
-            document.body.classList.remove("no-scroll");
-            document.body.style.paddingRight = "";
+            if (!Modal.elements.length) {
+                document.body.classList.remove("no-scroll");
+                document.body.style.paddingRight = "";
+            }
 
             if (typeof onClose === "function") {
                 onClose();
