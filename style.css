@@ -14,9 +14,6 @@ body {
         Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
         sans-serif;
 }
-main {
-    margin: 20px;
-}
 
 button {
     border: none;
@@ -32,8 +29,25 @@ button {
     font-weight: 600;
 }
 
-.btn:hover {
-    opacity: 0.8;
+header,
+article {
+    width: min(740px, 90%);
+    margin: 20px auto 0;
+}
+
+header {
+    position: sticky;
+    top: 0;
+    padding: 20px 0;
+    background: #fff;
+}
+
+article p {
+    margin: 10px 0;
+}
+
+article img {
+    max-width: 100%;
 }
 
 .modal-backdrop {
@@ -60,8 +74,8 @@ button {
 
 .modal-container {
     position: relative;
-    width: min(700px, 90%);
-    padding: 20px;
+    width: min(600px, 90%);
+    padding: 28px;
     border-radius: 10px;
     background: #fff;
     transform: scale(0);
@@ -87,4 +101,8 @@ button {
 .modal-content {
     max-height: 80vh;
     overflow-y: auto;
+}
+
+.no-scroll {
+    overflow: hidden;
 }
