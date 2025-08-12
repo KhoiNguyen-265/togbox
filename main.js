@@ -2,6 +2,23 @@ const $ = document.querySelector.bind(document);
 const $$ = document.querySelectorAll.bind(document);
 
 function Modal() {
+    function getScrollbarWidth() {
+        if (getScrollbarWidth.value) {
+            return getScrollbarWidth.value;
+        }
+        const div = document.createElement("div");
+        Object.assign(div.style, {
+            position: "absolute",
+            top: "-9999px",
+            overflow: "scroll",
+        });
+        document.body.appendChild(div);
+        getScrollbarWidth.value = div.offsetWidth - div.clientWidth;
+        document.body.removeChild(div);
+
+        return getScrollbarWidth.value;
+    }
+
     this.openModal = (options = {}) => {
         const { templateId, allowBackdropClose = true } = options;
         const template = $(`#${templateId}`);
@@ -39,6 +56,7 @@ function Modal() {
 
         // Disable scrolling
         document.body.classList.add("no-scroll");
+        document.body.style.paddingRight = getScrollbarWidth() + "px";
 
         // Attach event listeners
         closeBtn.onclick = () => this.closeModal(backdrop);
@@ -67,6 +85,7 @@ function Modal() {
 
             // Enable scrolling
             document.body.classList.remove("no-scroll");
+            document.body.style.paddingRight = "";
         };
     };
 }
@@ -77,9 +96,6 @@ $("#open-modal-1").onclick = () => {
     const modalElement = modal.openModal({
         templateId: "modal-1",
     });
-
-    const img = modalElement.querySelector("img");
-    console.log(img);
 };
 
 $("#open-modal-2").onclick = () => {
