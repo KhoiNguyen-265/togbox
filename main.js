@@ -7,6 +7,8 @@ function Modal(options = {}) {
         closeMethods = ["button", "overlay", "escape"],
         destroyOnClose = true,
         cssClass = [],
+        onOpen,
+        onClose,
     } = options;
 
     const template = $(`#${templateId}`);
@@ -102,13 +104,27 @@ function Modal(options = {}) {
             });
         }
 
+        this._onTransitionEnd(() => {
+            if (typeof onOpen === "function") {
+                onOpen();
+            }
+        });
+
         return this._backdrop;
+    };
+
+    this._onTransitionEnd = (callback) => {
+        this._backdrop.ontransitionend = (e) => {
+            if (e.propertyName !== "transform") return;
+            callback();
+        };
     };
 
     this.close = (destroy = destroyOnClose) => {
         this._backdrop.classList.remove("show");
-        this._backdrop.ontransitionend = () => {
-            if (destroy && this._backdrop) {
+
+        this._onTransitionEnd(() => {
+            if (destroy) {
                 this._backdrop.remove();
                 this._backdrop = null;
             }
@@ -116,7 +132,11 @@ function Modal(options = {}) {
             // Enable scrolling
             document.body.classList.remove("no-scroll");
             document.body.style.paddingRight = "";
-        };
+
+            if (typeof onClose === "function") {
+                onClose();
+            }
+        });
     };
 
     this.destroy = () => {
@@ -128,6 +148,12 @@ const modal1 = new Modal({
     templateId: "modal-1",
     // closeMethods: ["button", "overlay", "escape"],
     destroyOnClose: false,
+    onOpen: () => {
+        console.log("Modal 1 opened");
+    },
+    onClose: () => {
+        console.log("Modal 1 closed");
+    },
 });
 
 $("#open-modal-1").onclick = () => {
@@ -140,10 +166,10 @@ const modal2 = new Modal({
     footer: true,
     cssClass: ["class1", "class2", "classN"],
     onOpen: () => {
-        console.log("Modal opened");
+        console.log("Modal 2 opened");
     },
     onClose: () => {
-        console.log("Modal closed");
+        console.log("Modal 2 closed");
     },
 });
 $("#open-modal-2").onclick = () => {
