@@ -1,9 +1,9 @@
 const $ = document.querySelector.bind(document);
 const $$ = document.querySelectorAll.bind(document);
 
-Modal.elements = [];
+Togbox.elements = [];
 
-function Modal(options = {}) {
+function Togbox(options = {}) {
     this.opt = Object.assign(
         {
             closeMethods: ["button", "overlay", "escape"],
@@ -31,7 +31,7 @@ function Modal(options = {}) {
     this._handleEscapeKey = this._handleEscapeKey.bind(this);
 }
 
-Modal.prototype._getScrollbarWidth = function () {
+Togbox.prototype._getScrollbarWidth = function () {
     if (this._scrollbarWidth) {
         return this._scrollbarWidth;
     }
@@ -49,15 +49,15 @@ Modal.prototype._getScrollbarWidth = function () {
     return this._scrollbarWidth;
 };
 
-Modal.prototype._build = function () {
+Togbox.prototype._build = function () {
     const content = this.template.content.cloneNode(true);
 
     // Create modal elements
     this._backdrop = document.createElement("div");
-    this._backdrop.className = "modal-backdrop";
+    this._backdrop.className = "togbox__backdrop";
 
     const container = document.createElement("div");
-    container.className = "modal-container";
+    container.className = "togbox__container";
 
     this.opt.cssClass.forEach((className) => {
         if (typeof className === "string") {
@@ -66,7 +66,7 @@ Modal.prototype._build = function () {
     });
 
     if (this._allowButtonClose) {
-        const closeBtn = this._createButton("&times;", "modal-close", () =>
+        const closeBtn = this._createButton("&times;", "togbox__close", () =>
             this.close()
         );
 
@@ -74,7 +74,7 @@ Modal.prototype._build = function () {
     }
 
     const modalContent = document.createElement("div");
-    modalContent.className = "modal-content";
+    modalContent.className = "togbox__content";
 
     // Append content and elements
     modalContent.append(content);
@@ -82,7 +82,7 @@ Modal.prototype._build = function () {
 
     if (this.opt.footer) {
         this._modalFooter = document.createElement("div");
-        this._modalFooter.className = "modal-footer";
+        this._modalFooter.className = "togbox__footer";
 
         this._renderFooterContent();
 
@@ -95,25 +95,25 @@ Modal.prototype._build = function () {
     document.body.append(this._backdrop);
 };
 
-Modal.prototype.setFooterContent = function (html) {
+Togbox.prototype.setFooterContent = function (html) {
     this._footerContent = html;
     this._renderFooterContent();
 };
 
-Modal.prototype.addFooterButton = function (title, className, callback) {
+Togbox.prototype.addFooterButton = function (title, className, callback) {
     const button = this._createButton(title, className, callback);
 
     this._footerButtons.push(button);
     this._renderFooterButtons();
 };
 
-Modal.prototype._renderFooterContent = function () {
+Togbox.prototype._renderFooterContent = function () {
     if (this._modalFooter && this._footerContent) {
         this._modalFooter.innerHTML = this._footerContent;
     }
 };
 
-Modal.prototype._renderFooterButtons = function () {
+Togbox.prototype._renderFooterButtons = function () {
     if (this._modalFooter) {
         this._footerButtons.forEach((btn) => {
             this._modalFooter.append(btn);
@@ -121,7 +121,7 @@ Modal.prototype._renderFooterButtons = function () {
     }
 };
 
-Modal.prototype._createButton = function (title, className, callback) {
+Togbox.prototype._createButton = function (title, className, callback) {
     const button = document.createElement("button");
     button.className = className;
     button.innerHTML = title;
@@ -130,19 +130,19 @@ Modal.prototype._createButton = function (title, className, callback) {
     return button;
 };
 
-Modal.prototype.open = function () {
-    Modal.elements.push(this);
+Togbox.prototype.open = function () {
+    Togbox.elements.push(this);
 
     if (!this._backdrop) {
         this._build();
     }
 
     setTimeout(() => {
-        this._backdrop.classList.add("show");
+        this._backdrop.classList.add("togbox__backdrop--show");
     }, 0);
 
     // Disable scrolling
-    document.body.classList.add("no-scroll");
+    document.body.classList.add("togbox--no-scroll");
     document.body.style.paddingRight = this._getScrollbarWidth() + "px";
 
     // Attach event listeners
@@ -163,25 +163,25 @@ Modal.prototype.open = function () {
     return this._backdrop;
 };
 
-Modal.prototype._handleEscapeKey = function (e) {
-    const lastModal = Modal.elements[Modal.elements.length - 1];
+Togbox.prototype._handleEscapeKey = function (e) {
+    const lastModal = Togbox.elements[Togbox.elements.length - 1];
 
     if (e.key === "Escape" && this === lastModal) {
         this.close();
     }
 };
 
-Modal.prototype._onTransitionEnd = function (callback) {
+Togbox.prototype._onTransitionEnd = function (callback) {
     this._backdrop.ontransitionend = (e) => {
         if (e.propertyName !== "transform") return;
         callback();
     };
 };
 
-Modal.prototype.close = function (destroy = this.opt.destroyOnClose) {
-    Modal.elements.pop();
+Togbox.prototype.close = function (destroy = this.opt.destroyOnClose) {
+    Togbox.elements.pop();
 
-    this._backdrop.classList.remove("show");
+    this._backdrop.classList.remove("togbox__backdrop--show");
 
     if (this._allowEscapeClose) {
         document.removeEventListener("keydown", this._handleEscapeKey);
@@ -195,8 +195,8 @@ Modal.prototype.close = function (destroy = this.opt.destroyOnClose) {
         }
 
         // Enable scrolling
-        if (!Modal.elements.length) {
-            document.body.classList.remove("no-scroll");
+        if (!Togbox.elements.length) {
+            document.body.classList.remove("togbox--no-scroll");
             document.body.style.paddingRight = "";
         }
 
@@ -206,11 +206,11 @@ Modal.prototype.close = function (destroy = this.opt.destroyOnClose) {
     });
 };
 
-Modal.prototype.destroy = function () {
+Togbox.prototype.destroy = function () {
     this.close(true);
 };
 
-const modal1 = new Modal({
+const modal1 = new Togbox({
     templateId: "modal-1",
     // closeMethods: ["button", "overlay", "escape"],
     destroyOnClose: false,
@@ -226,7 +226,7 @@ $("#open-modal-1").onclick = () => {
     const modalElement = modal1.open();
 };
 
-const modal2 = new Modal({
+const modal2 = new Togbox({
     templateId: "modal-2",
     closeMethods: ["button", "escape"],
     cssClass: ["class1", "class2", "classN"],
@@ -254,7 +254,7 @@ $("#open-modal-2").onclick = () => {
     }
 };
 
-const modal3 = new Modal({
+const modal3 = new Togbox({
     templateId: "modal-3",
     footer: true,
     closeMethods: [],
@@ -271,17 +271,21 @@ $("#open-modal-3").onclick = () => {
 };
 
 // modal3.setFooterContent("<h2>Footer Content </h2>");
-modal3.addFooterButton("Danger", "modal-btn danger pull-left", (e) => {
-    modal3.close();
-    console.log("Danger clicked");
-});
+modal3.addFooterButton(
+    "Danger",
+    "togbox__btn togbox__btn--danger togbox__btn--pull-left",
+    (e) => {
+        modal3.close();
+        console.log("Danger clicked");
+    }
+);
 
-modal3.addFooterButton("Cancel", "modal-btn", (e) => {
+modal3.addFooterButton("Cancel", "togbox__btn", (e) => {
     modal3.close();
     console.log("Cancel clicked");
 });
 
-modal3.addFooterButton("Agree", "modal-btn primary", (e) => {
+modal3.addFooterButton("Agree", "togbox__btn togbox__btn--primary", (e) => {
     modal3.close();
     console.log("Agree clicked");
 });
