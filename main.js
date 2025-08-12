@@ -135,11 +135,7 @@ function Modal(options = {}) {
         }
 
         if (this._allowEscapeClose) {
-            document.addEventListener("keydown", (e) => {
-                if (e.key === "Escape") {
-                    this.close();
-                }
-            });
+            document.addEventListener("keydown", this._handleEscapeKey);
         }
 
         this._onTransitionEnd(() => {
@@ -151,6 +147,12 @@ function Modal(options = {}) {
         return this._backdrop;
     };
 
+    this._handleEscapeKey = (e) => {
+        if (e.key === "Escape") {
+            this.close();
+        }
+    };
+
     this._onTransitionEnd = (callback) => {
         this._backdrop.ontransitionend = (e) => {
             if (e.propertyName !== "transform") return;
@@ -160,6 +162,10 @@ function Modal(options = {}) {
 
     this.close = (destroy = destroyOnClose) => {
         this._backdrop.classList.remove("show");
+
+        if (this._allowEscapeClose) {
+            document.removeEventListener("keydown", this._handleEscapeKey);
+        }
 
         this._onTransitionEnd(() => {
             if (destroy) {
@@ -258,5 +264,3 @@ modal3.addFooterButton("Agree", "modal-btn primary", (e) => {
     modal3.close();
     console.log("Agree clicked");
 });
-
-modal3.open();
