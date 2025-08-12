@@ -5,6 +5,7 @@ function Modal(options = {}) {
     const {
         templateId,
         closeMethods = ["button", "overlay", "escape"],
+        footer = false,
         destroyOnClose = true,
         cssClass = [],
         onOpen,
@@ -70,8 +71,27 @@ function Modal(options = {}) {
         // Append content and elements
         modalContent.append(content);
         container.append(modalContent);
+
+        if (footer) {
+            this._modalFooter = document.createElement("div");
+            this._modalFooter.className = "modal-footer";
+
+            if (this._footerContent) {
+                this._modalFooter.innerHTML = this._footerContent;
+            }
+
+            container.appendChild(this._modalFooter);
+        }
+
         this._backdrop.append(container);
         document.body.append(this._backdrop);
+    };
+
+    this.setFooterContent = (html) => {
+        this._footerContent = html;
+        if (this._modalFooter) {
+            this._modalFooter.innerHTML = html;
+        }
     };
 
     this.open = () => {
@@ -127,6 +147,7 @@ function Modal(options = {}) {
             if (destroy) {
                 this._backdrop.remove();
                 this._backdrop = null;
+                this._modalFooter = null;
             }
 
             // Enable scrolling
@@ -163,7 +184,6 @@ $("#open-modal-1").onclick = () => {
 const modal2 = new Modal({
     templateId: "modal-2",
     closeMethods: ["button", "escape"],
-    footer: true,
     cssClass: ["class1", "class2", "classN"],
     onOpen: () => {
         console.log("Modal 2 opened");
@@ -188,3 +208,24 @@ $("#open-modal-2").onclick = () => {
         };
     }
 };
+
+const modal3 = new Modal({
+    templateId: "modal-3",
+    footer: true,
+    onOpen: () => {
+        console.log("Modal 3 opened");
+    },
+    onClose: () => {
+        console.log("Modal 3 closed");
+    },
+});
+
+$("#open-modal-3").onclick = () => {
+    const modalElement = modal3.open();
+};
+
+modal3.setFooterContent("<h2>Footer Content </h2>");
+
+modal3.open();
+
+modal3.setFooterContent("<h2>Footer Content New</h2>");
